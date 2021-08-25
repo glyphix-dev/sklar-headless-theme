@@ -20,6 +20,8 @@ add_action( "admin_menu", "remove_menus" );
 //     return false;
 // }
 
+include_once("functions/theme-functions.php");
+include_once("functions/child-theme-functions.php");
 include_once("functions/custom-post-types.php");
 include_once("functions/custom-shortcodes.php");
 include_once("functions/custom-taxonomies.php");
@@ -373,142 +375,6 @@ include 'lib/acf_bidirectional_relationship.php';
 include 'lib/cat-walker.php';
 include 'lib/representative.php';
 
-add_filter( 'gx_get_pdf_title', 'filter_pdf_title', 10, 1 );
-function filter_pdf_title( $title ) {
-  global $wp_query;
-  $rel = get_query_var('rel');
-  $rels = get_post_ancestors( $rel );
-  $cat = '';
-  foreach ($rels as $key => $ancestor):
-    $cat .= get_the_title($ancestor).'-';
-  endforeach;
-  //rtrim($cat,"-");
-  switch (true) {
-    case $wp_query->is_tag:
-		case $wp_query->is_tax:
-		case $wp_query->is_archive:
-      $title = sanitize_title(wp_specialchars_decode($title.'-'.$cat.get_the_title($rel)));
-      break;
-    default:
-      # code...
-      break;
-  }
-  return strtolower( 'SK-'.$title );
-}
-
-
-
-
-
-// staff unions
-
-add_action( 'graphql_register_types', 'register_staff_union', 10, 1 );
-
-function register_staff_union( $type_registry ) {
-  register_graphql_union_type( 'GenreOrMovieUnion', [
-    'typeNames'       => [ 'Genre', 'Movie' ],
-    'resolveType' => function( $search_result ) use ( $type_registry ) {
-      // Here we receive the object or array that's being resolved by the field
-      // and we can determine what Type to return
-      $type = null;
-
-      if ( $search_result instanceof \WPGraphQL\Model\Term && $search_result->taxonomy === 'genre' ) {
-        $type = 'Genre';
-      } else if ( $search_result instanceof \WPGraphQL\Model\Post && $search_result->post_type === 'movie' ) {
-        $type = 'Movie';
-      }
-      return $type;
-    }
-  ] );
-}
-
-function register_child_menus() {
-    register_nav_menus(
-      array(
-        'footer-menu' => __( 'Footer Menu' ),
-      )
-    );
-  }
-  add_action( 'init', 'register_child_menus' );
-
-add_action('wp_enqueue_scripts','gx_load_styles',0,1000);
-function gx_load_styles(){
-    wp_enqueue_style( 'parent-theme', get_template_directory_uri().'/style.css', null, null, 'screen' );
-    wp_enqueue_style('child-theme', get_stylesheet_directory_uri() .'/dist/main.css', array('parent-theme'));
-}
-
-function create_menubar( $theme_location ) {
-    if ( ($theme_location) && ($locations = get_nav_menu_locations()) && isset($locations[$theme_location]) ) {
-
-        $menu = get_term( $locations[$theme_location], 'nav_menu' );
-        $menu_items = wp_get_nav_menu_items($menu->term_id);
-
-        $menu_list  = '<nav id="'.sanitize_title($menu->name).'" aria-label="' . $menu->name . ' Navigation">' ."\n";
-        $menu_list .= '<ul role="menubar" aria-label="' . $menu->name . ' Navigation">' ."\n";
-
-        foreach( $menu_items as $menu_item ) {
-            if( $menu_item->menu_item_parent == 0 ) {
-
-                $parent = $menu_item->ID;
-
-                $submenu_array = array();
-
-                // create submenu menu item list
-                foreach( $menu_items as $submenu ) {
-                    if( $submenu->menu_item_parent == $parent ) {
-                        $bool = true;
-                        $submenu_array[] = '<li><a class="nav-link" role="menuitem" tabindex="0" href="' . $submenu->url . '">' . $submenu->title . '</a></li>' ."\n";
-                    }
-                }
-
-                if( $bool == true && count( $submenu_array ) > 0 ) {
-                    // this item has a dropdown
-                    $menu_list .= '<li role="none">' ."\n";
-                    $menu_list .= '<a href="#" class="dropdown-trigger" role="menuitem" tabindex="0" aria-haspopup="true" aria-expanded="false">' . $menu_item->title . '</a>' ."\n";
-
-                    $menu_list .= '<ul id="' . sanitize_title($menu_item->title) . '-menu" role="menu" aria-label="' . $menu_item->title . '">' ."\n";
-                    $menu_list .= implode( "\n", $submenu_array );
-                    $menu_list .= '</ul>' ."\n";
-
-                } else {
-                    // this item doesn't have a dropdown
-                    $menu_list .= '<li role="none">' ."\n";
-                    $menu_list .= '<a class="nav-link" href="' . $menu_item->url . '" role="menuitem" tabindex="0">' . $menu_item->title . '</a>' ."\n";
-                }
-
-
-            // end <li>
-            $menu_list .= '</li>' ."\n";
-          }
-
-        }
-
-        $menu_list .= '</ul>' ."\n";
-        $menu_list .= '</nav>' ."\n";
-
-    } else {
-        $menu_list = '<!-- no menu defined in location "'.$theme_location.'" -->';
-    }
-
-    echo $menu_list;
-}
-
-
-function wp_full_title_capitalize( $title, $sep, $seplocation ) {
-
-    // Uppercases the entire title
-    $title = ucwords( $title );
-
-    return $title;
-
-}
-add_filter( 'wp_title', 'wp_full_title_capitalize',1000000 );
-
-
-
-//Move Yost to the bottom of the page
-// Move Yoast to bottom
-add_filter( 'wpseo_metabox_prio', function() { return 'low'; } );
 
 
 ?>
