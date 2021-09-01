@@ -382,6 +382,6 @@ add_filter( 'plugins_auto_update_enabled', '__return_true' );
 add_filter( 'themes_auto_update_enabled', '__return_true' );
 
 add_filter('graphql_connection_max_query_amount', function($amount, $source, $args, $context, $info) {
-    $amount = 10000; // whatever you want the limit to be, in this case 1000.
+    $amount = 20000; // whatever you want the limit to be, in this case 1000.
     return $amount;
 }, 10, 5 );
