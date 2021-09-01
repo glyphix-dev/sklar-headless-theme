@@ -84,42 +84,57 @@ add_filter( 'wp_title', 'wp_full_title_capitalize',1000000 );
 
 
 add_filter( 'register_post_type_args', function( $args, $post_type ) {
+	  $args['supports'][] = 'thumbnail';
     if ( 'staff' === $post_type ) {
       $args['show_in_graphql'] = true;
       $args['graphql_single_name'] = 'staff';
       $args['graphql_plural_name'] = 'allStaff';
+	  $args['taxonomies'] = ['category'];
     }
 
     if ( 'areas' === $post_type ) {
         $args['show_in_graphql'] = true;
         $args['graphql_single_name'] = 'areas';
         $args['graphql_plural_name'] = 'areas';
+	  $args['taxonomies'] = ['category'];
     }
 
     if ( 'clients' === $post_type ) {
         $args['show_in_graphql'] = true;
         $args['graphql_single_name'] = 'client';
         $args['graphql_plural_name'] = 'clients';
+	  $args['taxonomies'] = ['category'];
     }
 
     if ( 'testimonial' === $post_type ) {
         $args['show_in_graphql'] = true;
         $args['graphql_single_name'] = 'testimonial';
         $args['graphql_plural_name'] = 'allTestimonials';
+	  $args['taxonomies'] = ['category'];
     }
 
       if ( 'representative' === $post_type ) {
         $args['show_in_graphql'] = true;
         $args['graphql_single_name'] = 'matter';
         $args['graphql_plural_name'] = 'allMatters';
+	  $args['taxonomies'] = ['category'];
     }
 
     if ( 'careers' === $post_type ) {
         $args['show_in_graphql'] = true;
         $args['graphql_single_name'] = 'careers';
         $args['graphql_plural_name'] = 'allCareers';
+	  $args['taxonomies'] = ['category'];
     }
 
+    if ( 'attorney' === $post_type ) {
+        $args['show_in_graphql'] = true;
+        $args['graphql_single_name'] = 'attorney';
+        $args['graphql_plural_name'] = 'attorneys';
+	  $args['taxonomies'] = ['category'];
+    }
+	
+	
     return $args;
 
   }, 100000000, 2 );

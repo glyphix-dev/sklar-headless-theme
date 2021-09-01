@@ -4,7 +4,7 @@
 
 ///////////////////////////////////
 // CPT: Staff
-///////////////////////////////////
+// ///////////////////////////////////
 function setup_staff () {
     //POST TYPE
     $Labels = array(
@@ -72,9 +72,9 @@ function setup_areas () {
         'menu_position'       => 24,
         'rewrite'             => array( 'slug' => 'practice-areas', 'with_front' => false ),
         'has_archive'         => false,
-        'capability_type'     => 'page',
+        'capability_type'     => 'post',
         'hierarchical'        => true,
-        'supports'            => array( 'title', 'editor', 'category', 'page-attributes','page-template'),
+        'supports'            => array( 'title', 'editor', 'category', 'page-attributes','page-template','thumbnail'),
         'taxonomies'          => array('category'),
     );
     register_post_type( 'areas', $Options);
@@ -114,8 +114,8 @@ function setup_clients () {
         'has_archive'         => true,
         'capability_type'     => 'page',
         'hierarchical'        => false,
-        'supports'            => array( 'title','category'),
-        'taxonomies'          => array(),
+        'supports'            => array( 'title','category','thumbnail'),
+        'taxonomies'          => array('category'),
         'show_in_graphql' => true,
         'graphql_single_name' => 'clients',
         'graphql_plural_name' => 'allClients',
@@ -157,8 +157,8 @@ function setup_testimonials () {
         'has_archive'         => false,
         'capability_type'     => 'page',
         'hierarchical'        => false,
-        'supports'            => array( 'title', 'editor', 'page-attributes'),
-        'taxonomies'          => array(),
+        'supports'            => array( 'title', 'editor', 'page-attributes','thumbnail'),
+        'taxonomies'          => array('category'),
         'show_in_graphql' => true,
         'graphql_single_name' => 'testimonial',
         'graphql_plural_name' => 'testimonials',
